@@ -1,4 +1,4 @@
-window.count = 0;
+let count = 0;
 const image = document.getElementById("cookie");
 const clicker = document.getElementById("clicker__counter");
 function cookieClicker() {
