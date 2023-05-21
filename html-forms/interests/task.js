@@ -23,15 +23,9 @@ for (let interest of interests) {
 
             const childrenCheckboxes = event.target.parentElement.nextElementSibling.querySelectorAll('.interest__check');
 
-            if (event.target.checked) {
                 for (let checkbox of childrenCheckboxes) {
-                    checkbox.checked = true;
+                    checkbox.checked =event.target.checked;
                 }
-            } else {
-                for (let checkbox of childrenCheckboxes) {
-                    checkbox.checked = false;
-                }
-            }
         }
 
     });
