@@ -1,58 +1,90 @@
-const cart = document.querySelector('.cart__products');
-const valueButtons = document.querySelectorAll('.product__quantity-control');
-const addButtons = document.querySelectorAll('.product__add');
-
-
-for (let item of valueButtons) {
-    item.addEventListener('click', changeValue);
-}
-
-for (let item of addButtons) {
-    item.addEventListener('click', addToCart);
-}
-
-function changeValue(event) {
-
-    let value = event.target.parentNode.querySelector('.product__quantity-value');
-    let count = +value.innerText;
-
-    if (event.target.classList.contains('product__quantity-control_inc')) {
-        count++;
-        value.innerText = count;
-    } else {
-        if (count > 1) {
-            count--;
-            value.innerText = count;
-        } else {
-            value.innerText = 1;
-        }
+class Cart {
+    constructor () {
+      this.products = document.querySelectorAll('.products')
+      this.product = []
+      this.cart = document.querySelector('.cart__products')
+      this.carts = document.querySelectorAll('.cart__product')
     }
-}
-
-function addToCart(event) {
-
-    const product = event.target.closest('.product');
-    const id = product.dataset.id;
-    const countFromProduct = +event.target.parentNode.querySelector('.product__quantity-value').innerText;
-
-    for (let item of cart.children) {
-
-        if (item.dataset.id === id) {
-            let productCount = item.querySelector('.cart__product-count');
-            let total = +productCount.innerText;
-            productCount.innerText = total + countFromProduct;
-
-            return false;
-        }
+    getProduct (i) {
+      i--
+      for (let product of this.products) {
+        return product.children[i]
+      }
     }
-
-    const productImg = product.querySelector('.product__image').src;
-    const count = product.querySelector('.product__quantity-value').innerText;
-
-    const productToCart = `<div class="cart__product" data-id="${id}">
-                                <img class="cart__product-image" src="${productImg}">
-                                <div class="cart__product-count">${count}</div>
-                            </div>`;
-
-    cart.insertAdjacentHTML('beforeend', productToCart);
+    getCartProduct (i) {
+      this.buttonAdd(i).addEventListener('click', e => {
+          let card = Array.from(this.cart.children)
+          const productInCard = card.find((item, index, array) =>{
+              return array[index].attributes["data-id"].value==i
+          });
+          if(productInCard) {
+          
+          let total = Number(productInCard.children[1].textContent) + Number(this.getQuantity(i))
+          productInCard.children[1].textContent = total
+          } else {
+              let elem = document.createElement('div')
+              elem.classList.add('cart__product')
+              elem.setAttribute('data-id', i)
+              elem.style.display = 'flex'
+              elem.innerHTML = `<img class="cart__product-image" src="p.png">
+                      <div class="cart__product-count">${this.getQuantity(i)}</div>`
+              this.cart.appendChild(elem)
+              elem.children[0].setAttribute('src', this.getProduct(i).children[1].src)   
+          }
+      })
+    }
+    getQuantity (i) {
+      return this.getProduct(i).children[2].children[0].children[1].children[1]
+        .innerText
+    }
+    setQuantity (i, val) {
+      this.getProduct(
+        i
+      ).children[2].children[0].children[1].children[1].innerText = val
+    }
+    plusQuantity (i) {
+        if (Number(this.getQuantity(i)) + 1 < 100)
+          this.getProduct(
+            i
+          ).children[2].children[0].children[1].children[1].innerText =
+            Number(this.getQuantity(i)) + 1
+      }
+      minusQuantity (i) {
+        if (Number(this.getQuantity(i)) - 1 > 0)
+          this.getProduct(
+            i
+          ).children[2].children[0].children[1].children[1].innerText =
+            Number(this.getQuantity(i)) - 1
+      }
+      productInc (i) {
+        return this.getProduct(i).children[2].children[0].children[1].children[2]
+      }
+      productDec (i) {
+        return this.getProduct(i).children[2].children[0].children[1].children[0]
+      }
+      buttonAdd (i) {
+        return this.getProduct(i).children[2].children[0].children[2]
+      } 
+      addProduct (i) {
+        this.productInc(i).addEventListener('click', e => {
+          
+          this.plusQuantity(i)
+          
+        })
+        this.productDec(i).addEventListener('click', e => {
+         
+          this.minusQuantity(i)
+          
+        })
+      } 
 }
+    let product = new Cart()
+
+    product.addProduct(1)
+    product.addProduct(2)
+    product.addProduct(3)
+    product.addProduct(4)
+    product.getCartProduct(1)
+    product.getCartProduct(2)
+    product.getCartProduct(3)
+    product.getCartProduct(4)

@@ -1,32 +1,29 @@
-const taskInput = document.getElementById('task__input');
-const taskAdd = document.getElementById('tasks__add');
-const tasksList = document.getElementById('tasks__list');
+class Todo {
+  constructor () {
+    this.div = document.querySelector('.tasks__list')
+    this.input = document.querySelector('.tasks__input')
+    this.add = document.querySelector('.tasks__add')
+    this.tasks()
+  }
+  tasks() {
+    this.add.addEventListener('click', e => {
+      e.preventDefault()
+      let elem = document.createElement('div')
+      if (this.input.value.trim() !== '') {
+        elem.classList.add('task')
+        elem.innerHTML += `<div class="task__title">
+      ${this.input.value}
+    </div>
+    <a href="#" class="task__remove">&times;</a>`
+        this.div.parentNode.insertBefore(elem, this.div.nextSibling)
+        this.input.value = ''
+    }
+      elem.addEventListener('click', e => {
 
-const storageKey = 'tasks';
-
-const closeTask = (e,task) => {
-  e.preventDefault(); 
-  console.log(task);
-  task.remove();
-  localStorage.setItem(storageKey, tasksList.innerHTML);    
+        elem.remove()
+      })
+    })
+  }
 }
 
-taskAdd.addEventListener('click', e => {
-  e.preventDefault();
-  if (!taskInput.value)
-    return;
-  
-  const task = document.createElement('div');
-  task.className = 'task';
-  task.innerHTML = `<div class="task__title">${taskInput.value}</div><a href="#" class="task__remove">&times;</a>`;
-    
-  task.querySelector('.task__remove').addEventListener('click', e => closeTask(e,task));
-  
-  tasksList.appendChild(task);
-  localStorage.setItem(storageKey, tasksList.innerHTML);  
-  
-})
-
-tasksList.innerHTML = localStorage.getItem(storageKey);
-for (const task of tasksList.getElementsByClassName('task'))
-  task.querySelector('.task__remove').addEventListener('click', e => closeTask(e,task));
+let todo = new Todo()
